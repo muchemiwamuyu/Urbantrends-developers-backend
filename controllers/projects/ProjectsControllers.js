@@ -2,17 +2,17 @@ import connectDb from "../../config/database.js";
 
 // add projects
 export async function addProject(req, res) {
-    const { project_name, tech_stack, project_description, repo_link, live_link } = req.body;
+    const { project_type, project_name, tech_stack, project_description, repo_link, live_link } = req.body;
 
-    if (!project_name || !tech_stack || !project_description || !repo_link) {
+    if ( !project_type || !project_name || !tech_stack || !project_description || !repo_link) {
         return res.status(400).json({ message: 'All fields are required except live_link' });
     }
 
     try {
         const database = await connectDb();
         const [result] = await database.execute(
-            'INSERT INTO urbantrends_developers (project_name, tech_stack, project_description, repo_link, live_link) VALUES (?, ?, ?, ?, ?)',
-            [project_name, JSON.stringify(tech_stack), project_description, repo_link, live_link]
+            'INSERT INTO urbantrends_developers (project_type, project_name, tech_stack, project_description, repo_link, live_link) VALUES (?, ?, ?, ?, ?, ?)',
+            [project_type, project_name, tech_stack, project_description, repo_link, live_link]
         );
         res.status(201).json({ message: 'Project added successfully', projectId: result.insertId });
     } catch (error) {
@@ -63,7 +63,7 @@ export async function updateProjectbyId (req, res) {
     try {
         const database = await connectDb();
         const { id } = req.params;
-        const { project_name, tech_stack, project_description, repo_link, live_link } = req.body;
+        const { project_type, project_name, tech_stack, project_description, repo_link, live_link } = req.body;
 
         if (!id) {
             return res.status(400).json({message: 'Project id is required'})
@@ -77,8 +77,8 @@ export async function updateProjectbyId (req, res) {
 
         // Update project details
         await database.execute(
-            'UPDATE urbantrends_developers SET project_name = ?, tech_stack = ?, project_description = ?, repo_link = ?, live_link = ? WHERE id = ?',
-            [project_name, tech_stack, project_description, repo_link, live_link, id]
+            'UPDATE urbantrends_developers SET project_type = ?, project_name = ?, tech_stack = ?, project_description = ?, repo_link = ?, live_link = ? WHERE id = ?',
+            [project_type, project_name, tech_stack, project_description, repo_link, live_link, id]
         );
 
         res.json({message: 'Project updated successfully'});
